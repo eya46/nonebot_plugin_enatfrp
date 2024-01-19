@@ -1,8 +1,9 @@
 [tool.poetry]
 name = "nonebot-plugin-enatfrp"
 version = "0.1.0"
-description = ""
+description = "SakuraFrp管理插件"
 authors = ["eya46 <61458340+eya46@users.noreply.github.com>"]
+license = "MIT"
 readme = "README.md"
 packages = [{ include = "nonebot_plugin_enatfrp" }]
 
