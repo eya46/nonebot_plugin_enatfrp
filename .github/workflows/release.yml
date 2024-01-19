@@ -19,7 +19,7 @@ jobs:
           architecture: "x64"
           cache: "poetry"
 
-      - run: poetry install -E all
+      - run: poetry install
         shell: bash
 
       - name: Push Tag
