@@ -9,15 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Push Tag
-        run: |
-          git config user.name eya46
-          git config user.email 61458340+eya46@users.noreply.github.com
-          git add .
-          git commit -m ":bookmark: Release $(poetry version -s)"
-          git tag ${{ env.TAG_NAME }}
-          git push && git push --tags
-
       - name: Install poetry
         run: pipx install poetry
         shell: bash
@@ -30,6 +21,15 @@ jobs:
 
       - run: poetry install -E all
         shell: bash
+
+      - name: Push Tag
+        run: |
+          git config user.name eya46
+          git config user.email 61458340+eya46@users.noreply.github.com
+          git add .
+          git commit -m ":bookmark: Release $(poetry version -s)"
+          git tag ${{ env.TAG_NAME }}
+          git push && git push --tags
 
       - name: Build Package
         run: |
