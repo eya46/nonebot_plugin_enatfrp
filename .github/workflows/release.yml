@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push Tag
+        run: |
+          git config user.name eya46
+          git config user.email 61458340+eya46@users.noreply.github.com
+          git add .
+          git commit -m ":bookmark: Release $(poetry version -s)"
+          git tag ${{ env.TAG_NAME }}
+          git push && git push --tags
+
+      - name: Install poetry
+        run: pipx install poetry
+        shell: bash
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+          architecture: "x64"
+          cache: "poetry"
+
+      - run: poetry install -E all
+        shell: bash
+
+      - name: Build Package
+        run: |
+          poetry build
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
