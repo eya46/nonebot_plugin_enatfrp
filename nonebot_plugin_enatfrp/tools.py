@@ -1,9 +1,12 @@
 import time
 from functools import wraps
 from html import unescape
+from json import loads
 from typing import Union, Any, Callable, Optional, List
 
 from arclet.alconna import Alconna
+from nonebot import get_driver
+from nonebot.internal.driver import HTTPClientMixin, Request
 from nonebot.internal.matcher import current_matcher
 from nonebot.internal.params import Depends
 from nonebot.permission import SUPERUSER
@@ -13,6 +16,37 @@ from nonebot_plugin_alconna.uniseg import Receipt
 
 from .config import config
 from .exception import eNatFrpAPIException
+
+if isinstance(driver := get_driver(), HTTPClientMixin):  # type:ignore
+    driver: HTTPClientMixin
+
+
+    async def request(method: str, url: str, headers, **data) -> Any:
+
+        resp = await driver.request(Request(
+            method, url,
+            headers=headers,
+            **({"params": data} if method == "GET" else {"json": data})
+        ))
+
+        res = loads(resp.content)
+        if resp.status_code == 500:
+            raise eNatFrpAPIException(res.get("code", -1), res.get("msg", str(resp.content)))
+        return res
+else:
+    from httpx import AsyncClient
+
+
+    async def request(method: str, url: str, headers, **data) -> Any:
+        async with AsyncClient() as client:
+            resp = await client.request(
+                method, url, headers=headers,
+                **({"params": data} if method == "GET" else {"json": data})
+            )
+            res = loads(resp.content)
+            if resp.status_code == 500:
+                raise eNatFrpAPIException(res.get("code", -1), res.get("msg", str(resp.content)))
+            return res
 
 # 日_周_月
 DAY_WEEK_MONTH = {

@@ -14,6 +14,8 @@ SakuraFrp管理插件
 
 ## 安装方式
 
+> 优先使用HTTP驱动器，如未配置则使用httpx请求
+
 ### 依赖管理
 
 - `pip install nonebot-plugin-enatfrp`
@@ -63,3 +65,4 @@ SakuraFrp管理插件
 
 - [nonebot2](https://github.com/nonebot/nonebot2) >=2.0.1
 - [plugin-alconna](https://github.com/nonebot/plugin-alconna) ^0.35.1
+- httpx >=0.20.0,<1.0.0

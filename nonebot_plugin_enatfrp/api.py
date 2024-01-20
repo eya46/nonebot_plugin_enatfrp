@@ -1,26 +1,13 @@
-from json import loads
 from pathlib import PurePosixPath
 from typing import TYPE_CHECKING, Protocol, Any, Literal, Dict
 from urllib.parse import urlparse, urlunparse
 
-from nonebot import get_driver
-from nonebot.internal.driver import HTTPClientMixin, Request
-
-from .exception import eNatFrpAPIException
+from .tools import request
 
 if TYPE_CHECKING:
     class _ApiCall(Protocol):
         async def __call__(self, **data: Any) -> Any:
             ...
-
-driver = get_driver()  # type:ignore
-
-assert isinstance(driver, HTTPClientMixin), "必须使用支持http请求的驱动器。"
-
-driver: HTTPClientMixin
-
-
-# from httpx import AsyncClient
 
 
 class API:
@@ -36,28 +23,7 @@ class API:
             self,
             path: str, method: Literal["GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD", "PATCH", "TRACE"], **data: Any
     ) -> Any:
-        resp = await driver.request(Request(
-            method, self.get_api(path),
-            headers=self.headers,
-            **({"params": data} if method == "GET" else {"json": data})
-        ))
-        # async with AsyncClient() as client:
-        #     resp = await client.request(
-        #         method, self.get_api(path), headers=self.headers,
-        #         **({"params": data} if method == "GET" else {"json": data})
-        #     )
-
-        res = loads(resp.content)
-        if resp.status_code == 500:
-            raise eNatFrpAPIException(res.get("code", -1), res.get("msg", str(resp.content)))
-        return res
-
-    # def __getattr__(self, name: str) -> "_ApiCall":
-    #     if (name.startswith("__") and name.endswith("__")) or len(_ := name.split("_", 1)) != 2:
-    #         raise AttributeError(
-    #             f"'{self.__class__.__name__}' object has no attribute '{name}'"
-    #         )
-    #     return partial(self.call_api, _[1], _[0].upper())
+        return await request(method, self.get_api(path), self.headers, **data)
 
     async def system_bulletin(self) -> list:
         """
