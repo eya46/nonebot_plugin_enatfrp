@@ -71,12 +71,9 @@ HELPS: List[str] = []
 
 
 async def send(msg: Union[Any, UniMessage]) -> Receipt:
-    if not (config.natfrp_at or config.natfrp_reply):
-        await current_matcher.get().send(str(msg) if isinstance(msg, UniMessage) else msg)
-    else:
-        if not isinstance(msg, UniMessage):
-            msg = UniMessage(msg)
-        return await msg.send(at_sender=config.natfrp_at, reply_to=config.natfrp_reply)
+    if not isinstance(msg, UniMessage):
+        msg = UniMessage(msg)
+    return await msg.send(at_sender=config.natfrp_at, reply_to=config.natfrp_reply)
 
 
 def bytes_to_human(data: int) -> str:
