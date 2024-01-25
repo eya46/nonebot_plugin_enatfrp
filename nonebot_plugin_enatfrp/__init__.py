@@ -14,7 +14,6 @@ from .tools import (
     HELPS
 )
 from .config import config, Config
-from .exception import eNatFrpAPIException
 
 api = API(config.natfrp_api, config.natfrp_token)
 
