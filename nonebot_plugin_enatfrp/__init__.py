@@ -2,7 +2,8 @@ from nonebot.plugin import PluginMetadata, inherit_supported_adapters, require
 
 require("nonebot_plugin_alconna")
 
-from typing import Annotated, Literal
+from typing_extensions import Annotated
+from typing import Literal
 
 from arclet.alconna import Args
 from nonebot_plugin_alconna import Alconna, Match, AlconnaMatch
