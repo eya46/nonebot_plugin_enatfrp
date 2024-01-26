@@ -63,6 +63,6 @@ SakuraFrp管理插件
 
 ## 依赖项
 
-- [nonebot2](https://github.com/nonebot/nonebot2) >=2.0.1
-- [plugin-alconna](https://github.com/nonebot/plugin-alconna) ^0.35.1
+- [nonebot2](https://github.com/nonebot/nonebot2) >=2.1.0
+- [plugin-alconna](https://github.com/nonebot/plugin-alconna) >=0.35.0,<=0.40.0
 - httpx >=0.20.0,<1.0.0
