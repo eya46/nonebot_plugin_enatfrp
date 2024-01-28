@@ -1,6 +1,6 @@
-from pathlib import PurePosixPath
 from typing import TYPE_CHECKING, Protocol, Any, Literal, Dict
-from urllib.parse import urlparse, urlunparse
+
+from yarl import URL
 
 from .tools import request
 
@@ -12,18 +12,14 @@ if TYPE_CHECKING:
 
 class API:
     def __init__(self, api: str, token: str):
-        self.api = api
+        self.api = URL(api)
         self.headers = {"Authorization": f"Bearer {token}"}
-
-    def get_api(self, path: str) -> str:
-        u = urlparse(self.api)
-        return urlunparse(u._replace(path=(PurePosixPath(u.path) / path).as_posix()))  # type:ignore
 
     async def call_api(
             self,
             path: str, method: Literal["GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD", "PATCH", "TRACE"], **data: Any
     ) -> Any:
-        return await request(method, self.get_api(path), self.headers, **data)
+        return await request(method, str(self.api / path), self.headers, **data)
 
     async def system_bulletin(self) -> list:
         """
