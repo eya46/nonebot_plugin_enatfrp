@@ -1,10 +1,10 @@
 from typing import Optional, List
 
 from nonebot import get_driver
-from pydantic import BaseModel, Field, Extra, __version__, AnyUrl
+from pydantic import BaseModel, Field, AnyUrl
 
 
-class Config(BaseModel, extra=Extra.ignore):
+class Config(BaseModel):
     natfrp_api: AnyUrl = Field(default="https://api.natfrp.com/v4")
     natfrp_token: Optional[str] = Field(default=None)
     natfrp_at: bool = Field(default=False)
@@ -23,11 +23,6 @@ class Config(BaseModel, extra=Extra.ignore):
     natfrp_cmd_showPCs: List[str] = Field(default=["计算机列表"])
 
 
-if __version__[0] == "1":
-    config: Config = Config.parse_obj(get_driver().config)  # type:ignore
-elif __version__[0] == "2":
-    config: Config = Config.model_validate(get_driver().config)  # type:ignore
-else:
-    raise Exception(f"不支持的pydantic版本:{__version__}")
+config: Config = Config(**get_driver().config.dict())
 
 __all__ = ["Config", "config"]
