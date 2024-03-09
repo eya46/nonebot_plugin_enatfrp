@@ -5,8 +5,7 @@ require("nonebot_plugin_alconna")
 from typing_extensions import Annotated
 from typing import Literal
 
-from arclet.alconna import Args
-from nonebot_plugin_alconna import Alconna, Match, AlconnaMatch
+from nonebot_plugin_alconna import Alconna, Match, AlconnaMatch, Args
 
 from .api import API
 from .tools import (
@@ -15,10 +14,10 @@ from .tools import (
 )
 from .config import config, Config
 
-api = API(config.natfrp_api, config.natfrp_token)
+api = API(config.api, config.token)
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_help, Args["index?", int]))
+@wrap_cmd(Alconna(config.cmd_help, Args["index?", int]))
 async def help_cmd_handle(index: Annotated[Match[int], AlconnaMatch("index")]):
     if index.available:
         await send(f"{index.result}.{HELPS[index.result]}")
@@ -26,14 +25,14 @@ async def help_cmd_handle(index: Annotated[Match[int], AlconnaMatch("index")]):
         await send("\n".join(f"{i}.{h}" for i, h in enumerate(HELPS)))
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_powerOn, Args["id", int]["password?", str, ""]))
+@wrap_cmd(Alconna(config.cmd_powerOn, Args["id", int]["password?", str, ""]))
 async def power_on_cmd_handle(
         id_: Annotated[Match[int], AlconnaMatch("id")], password: Annotated[Match[str], AlconnaMatch("password")]
 ):
     await send(await api.computer_poweron(id_.result, password.result))
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_tunnels))
+@wrap_cmd(Alconna(config.cmd_tunnels))
 async def tunnels_cmd_handle(cmd: Annotated[str, RawCommand()]):
     tunnels = await api.get_tunnels()
     msg = cmd + "：\n状态 ID 名称\n"
@@ -43,7 +42,7 @@ async def tunnels_cmd_handle(cmd: Annotated[str, RawCommand()]):
 
 
 @wrap_cmd(Alconna(
-    config.natfrp_cmd_trafficHistory,
+    config.cmd_trafficHistory,
     Args["id?", int]["type?", Literal["day", "week", "month", "日", "周", "月"], "day"]
 ))
 async def traffic_history_cmd_handle(
@@ -60,7 +59,7 @@ async def traffic_history_cmd_handle(
     await send(msg)
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_trafficPlans, Args[
+@wrap_cmd(Alconna(config.cmd_trafficPlans, Args[
     "type", Literal["valid", "invalid", "all", "可用", "不可用", "全部"], "all"
 ]))
 async def traffic_plans_cmd_handle(
@@ -76,7 +75,7 @@ async def traffic_plans_cmd_handle(
     await send(msg)
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_userInfo))
+@wrap_cmd(Alconna(config.cmd_userInfo))
 async def user_info_cmd_handle():
     u = await api.user_info()
     await send(
@@ -95,7 +94,7 @@ async def user_info_cmd_handle():
     )
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_announcement, Args["index", int, 0]))
+@wrap_cmd(Alconna(config.cmd_announcement, Args["index", int, 0]))
 async def announcement_cmd_handle(index: Annotated[Match[int], AlconnaMatch("index")]):
     announcements = await api.system_bulletin()
     index = min(max(len(announcements) - 1, 0), index.result)
@@ -103,14 +102,14 @@ async def announcement_cmd_handle(index: Annotated[Match[int], AlconnaMatch("ind
     await send(unescape_html(f"{a['icon']}{a['title']}{a['icon']}\n{a['time']}\n{a['content']}"))
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_auth, Args["id", int]["ip", str]))
+@wrap_cmd(Alconna(config.cmd_auth, Args["id", int]["ip", str]))
 async def auth_cmd_handle(
         id_: Annotated[Match[int], AlconnaMatch("id")], ip: Annotated[Match[str], AlconnaMatch("ip")]
 ):
     await send("IP:" + await api.tunnel_auth(id_.result, ip.result))
 
 
-@wrap_cmd(Alconna(config.natfrp_cmd_showPCs))
+@wrap_cmd(Alconna(config.cmd_showPCs))
 async def show_pcs_cmd_handle():
     pcs = await api.get_computers()
     await send("\n".join(f"{pc['id']}.{pc['name']}" + ("<加密>" if pc["type"] != 1 else "") for pc in pcs))

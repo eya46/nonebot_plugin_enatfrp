@@ -15,7 +15,7 @@ from nonebot_plugin_alconna import UniMessage, on_alconna, ALCONNA_RESULT
 from nonebot_plugin_alconna.uniseg import Receipt
 
 from .config import config
-from .exception import eNatFrpAPIException
+from .exception import NatFrpAPIException
 
 if isinstance(driver := get_driver(), HTTPClientMixin):  # type:ignore
     driver: HTTPClientMixin
@@ -31,7 +31,7 @@ if isinstance(driver := get_driver(), HTTPClientMixin):  # type:ignore
 
         res = loads(resp.content)
         if resp.status_code == 500:
-            raise eNatFrpAPIException(res.get("code", -1), res.get("msg", str(resp.content)))
+            raise NatFrpAPIException(res.get("code", -1), res.get("msg", str(resp.content)))
         return res
 else:
     from httpx import AsyncClient
@@ -45,7 +45,7 @@ else:
             )
             res = loads(resp.content)
             if resp.status_code == 500:
-                raise eNatFrpAPIException(res.get("code", -1), res.get("msg", str(resp.content)))
+                raise NatFrpAPIException(res.get("code", -1), res.get("msg", str(resp.content)))
             return res
 
 # 日_周_月
@@ -73,7 +73,7 @@ HELPS: List[str] = []
 async def send(msg: Union[Any, UniMessage]) -> Receipt:
     if not isinstance(msg, UniMessage):
         msg = UniMessage(msg)
-    return await msg.send(at_sender=config.natfrp_at, reply_to=config.natfrp_reply)
+    return await msg.send(at_sender=config.at, reply_to=config.reply)
 
 
 def bytes_to_human(data: int) -> str:
@@ -103,7 +103,7 @@ def wrap_cmd(acl: Alconna) -> Callable:
         async def _catch(*args, **kwargs):
             try:
                 await func(*args, **kwargs)
-            except eNatFrpAPIException as e:
+            except NatFrpAPIException as e:
                 await send(
                     f"命令 {_raw_command()} 失败<{e.code}> ->\n"
                     f"{e.message}"
@@ -111,7 +111,7 @@ def wrap_cmd(acl: Alconna) -> Callable:
 
         HELPS.append(acl.get_help().replace("\nUnknown", "").strip())
         on_alconna(
-            acl, permission=SUPERUSER, use_cmd_sep=config.natfrp_use_sep, use_cmd_start=config.natfrp_use_start
+            acl, permission=SUPERUSER, use_cmd_sep=config.use_sep, use_cmd_start=config.use_start
         ).handle()(_catch)
         return func
 

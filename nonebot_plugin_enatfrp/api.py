@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 
 class API:
-    def __init__(self, api: str, token: str):
-        self.api = URL(api)
+    def __init__(self, api: Any, token: str):
+        self.api = URL(str(api))
         self.headers = {"Authorization": f"Bearer {token}"}
 
     async def call_api(

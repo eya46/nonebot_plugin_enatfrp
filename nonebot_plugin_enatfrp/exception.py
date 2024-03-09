@@ -1,8 +1,8 @@
-class eNatFrpException(Exception):
+class NatFrpException(Exception):
     pass
 
 
-class eNatFrpAPIException(eNatFrpException):
+class NatFrpAPIException(NatFrpException):
     def __init__(self, code: int, message: str):
         self.code = code
         self.message = message
