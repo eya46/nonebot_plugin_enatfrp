@@ -1,13 +1,8 @@
-from typing import TYPE_CHECKING, Protocol, Any, Literal, Dict
+from typing import Any, Literal
 
 from yarl import URL
 
 from .tools import request
-
-if TYPE_CHECKING:
-    class _ApiCall(Protocol):
-        async def __call__(self, **data: Any) -> Any:
-            ...
 
 
 class API:
@@ -160,7 +155,7 @@ class API:
         """
         return await self.call_api("tunnel/delete", "POST", ids=ids)
 
-    async def tunnel_traffic(self, id_: int) -> Dict[str, int]:
+    async def tunnel_traffic(self, id_: int) -> dict[str, int]:
         """
         获取流量使用记录
         tag: 隧道管理

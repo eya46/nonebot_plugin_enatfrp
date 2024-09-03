@@ -1,7 +1,8 @@
 from collections import Counter
 from functools import cache
 from pathlib import PurePosixPath, Path
-from typing import Type, Iterable, Tuple, List, Union, Optional, Any, Set
+from typing import Union, Optional, Any
+from collections.abc import Iterable
 from urllib.parse import urlparse, urlunparse
 
 import httpx
@@ -46,11 +47,11 @@ def get_api() -> OpenAPI:
     return api
 
 
-def list2str(data: List[Any], seq: str = ",") -> str:
+def list2str(data: list[Any], seq: str = ",") -> str:
     return seq.join(map(str, data))
 
 
-def type2pyType(type_: Union[DataType, List[DataType]]) -> List[str]:
+def type2pyType(type_: Union[DataType, list[DataType]]) -> list[str]:
     if isinstance(type_, DataType):
         type_ = [type_]
     return [
@@ -83,7 +84,7 @@ def operation2description(operation: Operation) -> str:
     )
 
 
-def yield_api(paths: Paths) -> Iterable[Tuple[str, str, Optional[Operation]]]:
+def yield_api(paths: Paths) -> Iterable[tuple[str, str, Optional[Operation]]]:
     """
     :return: path,method,Operation
     """
@@ -101,7 +102,7 @@ def get_path_count(if_print: bool = False) -> Counter:
         d[ppp] += 1
     if if_print:
         for i in d:
-            print(f"{i} -> {d[i]}")
+            pass
     return d
 
 
@@ -125,7 +126,7 @@ def get_defName(path: str, method: str, strict: bool = False):
 
 def parameter2annotated(
         parameter: Optional[Union[Reference, Schema]], url: str = BASE_URL
-) -> Optional[Set[Tuple[str, str, Tuple]]]:
+) -> Optional[set[tuple[str, str, tuple]]]:
     if parameter is None:
         return None
     if isinstance(parameter, Reference):
@@ -163,7 +164,7 @@ def get_defParameters(method: str, operation: Operation):
 
 # 获取返回值
 
-def urlContent2py(content: dict) -> Type:
+def urlContent2py(content: dict) -> type:
     return {
         "application/json": str
     }[content]
@@ -173,11 +174,7 @@ def main():
     api = get_api()
     for path, method, op in yield_api(api.paths):
         # print(f"{path}[{method}] -> {get_defName(path, method)}")
-        print(f"""async def {get_defName(path, method)}(self):
-\"\"\"
-{operation2description(op)}
-method: {method.upper()}
-\"\"\"""")
+        pass
 
 
 if __name__ == "__main__":

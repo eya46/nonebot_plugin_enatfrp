@@ -2,7 +2,7 @@ import time
 from functools import wraps
 from html import unescape
 from json import loads
-from typing import Union, Any, Callable, Optional, List
+from typing import Union, Any, Callable, Optional
 
 from arclet.alconna import Alconna
 from nonebot import get_driver
@@ -67,7 +67,7 @@ TRAFFIC_PLAN_TYPE = {
     "all": "all"
 }
 
-HELPS: List[str] = []
+HELPS: list[str] = []
 
 
 async def send(msg: Union[Any, UniMessage]) -> Receipt:

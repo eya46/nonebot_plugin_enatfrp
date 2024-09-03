@@ -8,8 +8,8 @@
 # SakuraFrp管理插件
 
 ![License](https://img.shields.io/github/license/eya46/nonebot_plugin_enatfrp)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![NoneBot](https://img.shields.io/badge/nonebot-2.2.0+-red.svg)
+![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
+![NoneBot](https://img.shields.io/badge/nonebot-2.3.0+-red.svg)
 </div>
 
 ## 安装方式
@@ -86,5 +86,8 @@ natfrp_cmd_showPCs=
 
 ## 依赖项
 
-- [nonebot2](https://github.com/nonebot/nonebot2)[httpx] ^2.2.0
-- [plugin-alconna](https://github.com/nonebot/plugin-alconna) >=0.35.0,<1.0.0
+```toml
+python = "^3.9"
+nonebot2 = { version = ">=2.3.0", extras = ["httpx"] }
+nonebot-plugin-alconna = ">=0.52.2"
+```
